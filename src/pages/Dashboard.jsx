@@ -1,51 +1,73 @@
-import Sidebar from '../components/Sidebar'
-import Topbar from '../components/Topbar'
-import EventTable from '../components/EventTable'
+import { useState } from 'react';
+import Sidebar from '../components/Sidebar';
+import Topbar from '../components/Topbar';
+import EventCoordinatorPanel from '../components/EventCodinatorpanel';
+import RoomList from '../components/Roomlist';
+import PositionTable from '../components/Positiontable';
+import EventTable from '../components/EventTable';
 
 const Dashboard = () => {
+  const [selectedView, setSelectedView] = useState('newRequests'); // default to 'newRequests'
+const renderMainContent = () => {
+  switch (selectedView) {
+    case 'newRequests':
+    case 'events': // treat both the same
+      return (
+        <>
+          <EventCoordinatorPanel />
+          <div className="main-panel">
+            <RoomList />
+            <PositionTable />
+          </div>
+        </>
+      );
+    case 'estimate':
+      return <div style={{ padding: '1rem' }}>Estimate view here</div>;
+    case 'eventTable':
+      return <EventTable />;
+    case 'admins':
+      return <div style={{ padding: '1rem' }}>Admin management UI</div>;
+    default:
+      return <div style={{ padding: '1rem' }}>Coming Soon...</div>;
+  }
+};
+
   return (
     <>
       <style>{`
         :root {
           --color-background: #0d0b22;
-          --font-family: system-ui, sans-serif;
         }
         .dashboard {
           display: flex;
           background-color: var(--color-background);
           min-height: 100vh;
-          font-family: var(--font-family);
+          font-family: 'Segoe UI', sans-serif;
           color: white;
         }
-        main.content {
+        .content {
           flex: 1;
-          padding: 1.5rem; /* 6 in Tailwind is 1.5rem */
+          padding: 1rem;
           display: flex;
           flex-direction: column;
         }
-        .content > .topbar-wrapper {
-          /* space below topbar */
-          margin-top: 0;
-        }
-        .content > .table-wrapper {
-          margin-top: 1.5rem; /* mt-6 is 1.5rem */
-          flex-grow: 1;
+        .main-panel {
+          display: flex;
+          flex: 1;
+          gap: 1rem;
+          margin-top: 1rem;
         }
       `}</style>
 
       <div className="dashboard">
-        <Sidebar />
+        <Sidebar onMenuSelect={setSelectedView} />
         <main className="content">
-          <div className="topbar-wrapper">
-            <Topbar />
-          </div>
-          <div className="table-wrapper">
-            <EventTable />
-          </div>
+          <Topbar />
+          {renderMainContent()}
         </main>
       </div>
     </>
-  )
-}
+  );
+};
 
-export default Dashboard
+export default Dashboard;
